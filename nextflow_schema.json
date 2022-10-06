@@ -1,0 +1,223 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/./master/nextflow_schema.json",
+    "title": "epi2me-labs/wf-human-sv",
+    "description": "Structural variation workflow (and benchmarking) using sniffles2.",
+    "url": "https://github.com/epi2me-labs/wf-human-sv",
+    "type": "object",
+    "definitions": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where and how the pipeline should find input data and save output data.",
+            "properties": {
+                "fastq": {
+                    "type": "string",
+                    "format": "path",
+                    "description": "A fastq file or directory containing fastq input files or directories of input files.",
+                    "help_text": "If directories named \\\"barcode*\\\" are found under the `--fastq` directory the data is assumed to be multiplex and each barcode directory will be processed independently. If `.fastq(.gz)` files are found under the `--fastq` directory the sample is assumed to not be multiplexed. In this second case `--samples` should be a simple name rather than a CSV file."
+                },
+                "bam": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Pass a BAM file instead of fastq in order to skip the alignment steps and go straight to SV calling."
+                },
+                "bai": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "BAM file index that accompanies and is required for use with --bam."
+                },
+                "reference": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "FASTA format reference sequence"
+                },
+                "sample": {
+                    "type": "string",
+                    "description": "A sample name for non-multiplexed data. Permissible if passing a file or directory of .fastq(.gz)."
+                },
+                "sample_sheet": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "CSV file with columns named `barcode`, `sample_name` and `type`. Permissible if passing a directory containing barcodeXX sub-directories."
+                },
+                "out_dir": {
+                    "type": "string",
+                    "default": "output",
+                    "format": "directory-path",
+                    "description": "Directory for output of all user-facing files."
+                },
+                "report_name": {
+                    "type": "string",
+                    "default": "report",
+                    "description": "Optional report suffix"
+                },
+                "sanitize_fastq": {
+                    "type": "boolean",
+                    "description": "Use additional heuristics to identify barcodes from file paths",
+                    "help_text": "Enabling this option will group together files into samples by the presence of strings of the form `barcodeXXX` present in filenames, rather than simply files grouped into directories (as output by MinKNOW and the Guppy basecaller)."
+                },
+                "tr_bedfile": {
+                    "type": "string",
+                    "format": "path",
+                    "description": "Input .bed file containing tandem repeat annotations for the reference genome. Improves accuracy in our benchmarking."
+                }
+            },
+            "required": [
+                "reference"
+            ]
+        },
+        "benchmarking_options": {
+            "title": "Benchmarking options",
+            "type": "object",
+            "description": "",
+            "default": "",
+            "properties": {
+                "benchmark": {
+                    "type": "boolean",
+                    "description": "Switch between standard or benchmark modes",
+                    "help_text": "In benchmarking mode the calls made using the pipeline will be evaluated against the supplied truthset. The report will be populated with the results. Paths to truthset files are set within the config file, and may be URLs or absolute paths."
+                },
+                "target_bedfile": {
+                    "type": "string",
+                    "description": "BED file, SVs will only be called in these regions"
+                },
+                "truthset_vcf": {
+                    "type": "string",
+                    "default": "https://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/AshkenazimTrio/analysis/NIST_SVs_Integration_v0.6/HG002_SVs_Tier1_v0.6.vcf.gz",
+                    "description": "The `truth` VCF to use for benchmarking"
+                },
+                "truthset_index": {
+                    "type": "string",
+                    "default": "https://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/AshkenazimTrio/analysis/NIST_SVs_Integration_v0.6/HG002_SVs_Tier1_v0.6.vcf.gz.tbi",
+                    "description": "The `truth` VCF index to use for benchmarking"
+                },
+                "truthset_bed": {
+                    "type": "string",
+                    "default": "https://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/AshkenazimTrio/analysis/NIST_SVs_Integration_v0.6/HG002_SVs_Tier1_v0.6.bed",
+                    "description": "The `truth` VED to use for benchmarking"
+                }
+            },
+            "fa_icon": "fas fa-balance-scale"
+        },
+        "advanced_options": {
+            "title": "Advanced options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Algorithm options",
+            "properties": {
+                "min_len": {
+                    "type": "integer",
+                    "default": 200,
+                    "description": "Minimum read length to retain for calling"
+                },
+                "max_len": {
+                    "type": "integer",
+                    "default": 999999,
+                    "description": "Maximum read length to retain for calling"
+                },
+                "min_qual": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Minimum read quality to retain for calling"
+                },
+                "min_sv_length": {
+                    "type": "integer",
+                    "default": 30,
+                    "description": "Minimum SV length to retain after calling"
+                },
+                "max_sv_length": {
+                    "type": "integer",
+                    "default": 100000,
+                    "description": "Maximum SV length to retain after calling"
+                },
+                "min_read_support": {
+                    "type": "string",
+                    "default": "auto",
+                    "description": "Minimum read support required to call a SV"
+                },
+                "min_read_support_limit": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Minimum read depth needed to retain an SV call"
+                },
+                "sv_types": {
+                    "type": "string",
+                    "default": "DEL,INS",
+                    "hidden": true
+                },
+                "cluster_merge_pos": {
+                    "type": "integer",
+                    "default": 150,
+                    "description": "Max merging distance for insertions and deletions on the same read and cluster in non-repeat regions"
+                }
+            }
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object",
+            "fa_icon": "fas fa-file-import",
+            "description": "Less common options for the pipeline, typically set in a config file.",
+            "help_text": "These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.\n\nTypically these options would be set in a Nextflow config file loaded for all pipeline runs, such as `~/.nextflow/config`.",
+            "properties": {
+                "threads": {
+                    "type": "integer",
+                    "default": 2,
+                    "description": "Max number of threads to use for each process."
+                },
+                "help": {
+                    "type": "boolean",
+                    "description": "Display help text.",
+                    "fa_icon": "fas fa-question-circle"
+                }
+            }
+        }
+    },
+    "allOf": [
+        {
+            "$ref": "#/definitions/input_output_options"
+        },
+        {
+            "$ref": "#/definitions/benchmarking_options"
+        },
+        {
+            "$ref": "#/definitions/advanced_options"
+        },
+        {
+            "$ref": "#/definitions/generic_options"
+        }
+    ],
+    "properties": {
+        "aws_queue": {
+            "type": "string",
+            "hidden": true
+        },
+        "aws_image_prefix": {
+            "type": "string",
+            "hidden": true
+        },
+        "wfversion": {
+            "type": "string",
+            "default": "v1.0.0",
+            "hidden": true
+        },
+        "monochrome_logs": {
+            "type": "boolean",
+            "hidden": true
+        },
+        "validate_params": {
+            "type": "boolean",
+            "default": true,
+            "hidden": true
+        },
+        "show_hidden_params": {
+            "type": "boolean",
+            "hidden": true
+        }
+    },
+    "docs": {
+        "intro": "## Introduction\n\nThe pipeline performs the following steps:\n* Maps reads using [minimap2](https://github.com/lh3/minimap2)\n* Calls variants using [sniffles2](https://github.com/fritzsedlazeck/Sniffles)\n* Filters variants by minimum/maximum length, read support, or type (e.g. insertion, deletion, etc.)\n* Optionally evaluates yours calls against a truthset using [truvari](https://github.com/spiralgenetics/truvari)\n",
+        "links": "## Useful links\n\n* [nextflow](https://www.nextflow.io/)\n* [docker](https://www.docker.com/products/docker-desktop)\n* [conda](https://docs.conda.io/en/latest/miniconda.html)"
+    }
+}

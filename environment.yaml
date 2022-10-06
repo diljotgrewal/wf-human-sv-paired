@@ -1,0 +1,26 @@
+name: epi2melabs-wf-human-sv
+channels:
+    - epi2melabs
+    - bioconda
+    - conda-forge
+    - defaults
+dependencies:
+    - python==3.8.*
+    - gcc_linux-64
+    - make
+    - aplanat >=0.6.5
+    - pysam
+    - nanoplot
+    - fastcat
+    - seqtk
+    - samtools >=1.8
+    - bedtools
+    - bcftools
+    - vcftools
+    - vcflib
+    - mosdepth
+    - minimap2==2.24
+    - sniffles=2.0.3
+    - pip:
+        - pyfaidx
+        - Truvari
