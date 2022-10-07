@@ -548,6 +548,7 @@ workflow tumor_bam {
         report.html.concat(
             called.vcf,
             called.vcf_index,
+            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
@@ -573,6 +574,7 @@ workflow normal_bam {
         report.html.concat(
             called.vcf,
             called.vcf_index,
+            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
