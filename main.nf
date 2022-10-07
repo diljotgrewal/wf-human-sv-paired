@@ -695,8 +695,9 @@ workflow {
     tumor_results = tumor_bam(tumor_bam, tumor_bai, reference, target, OPTIONAL)
     normal_results = normal_bam(normal_bam, normal_bai, reference, target, OPTIONAL)
 
+    tumor_results | view()
 
-    sniffles_paired(tumor_results.snf, normal_results.snf)
+    //sniffles_paired(tumor_results.snf, normal_results.snf)
 
     tumor_output(tumor_results)
     normal_output(normal_results)
