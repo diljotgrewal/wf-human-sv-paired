@@ -453,7 +453,7 @@ workflow variantCall {
     emit:
         vcf = indexVCF.out.vcf_gz
         vcf_index = indexVCF.out.vcf_tbi
-        snf = sniffles2.snf
+        snf = sniffles2.out.snf
         read_depth = mosdepth.out.mosdepth_dist
 }
 
