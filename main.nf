@@ -453,6 +453,7 @@ workflow variantCall {
     emit:
         vcf = indexVCF.out.vcf_gz
         vcf_index = indexVCF.out.vcf_tbi
+        snf = sniffles2.snf
         read_depth = mosdepth.out.mosdepth_dist
 }
 
@@ -547,6 +548,7 @@ workflow tumor_bam {
         report.html.concat(
             called.vcf,
             called.vcf_index,
+            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
@@ -572,6 +574,7 @@ workflow normal_bam {
         report.html.concat(
             called.vcf,
             called.vcf_index,
+            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
