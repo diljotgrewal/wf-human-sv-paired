@@ -89,7 +89,7 @@ process sniffles2 {
         --cluster-merge-pos $params.cluster_merge_pos \
         --input $bam \
         $tr_arg \
-        --snf ${name}.sniffles.snf --vcf ${name}.sniffles.vcf
+        --snf ${name}.sniffles.snf --vcf ${name}.sniffles.vcf --non-germline
     sed -i '/.:0:0:0:NULL/d' ${name}.sniffles.vcf
     """
 }
