@@ -700,7 +700,7 @@ workflow {
 
     tumor_results | view()
 
-    sniffles_paired(tumor_results.out.snf, normal_results.out.snf)
+    sniffles_paired(tumor_results[3], normal_results[3])
 
     tumor_output(tumor_results)
     normal_output(normal_results)
