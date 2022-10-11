@@ -700,7 +700,7 @@ workflow {
 
     tumor_results| first| view()
 
-    //sniffles_paired(tumor_results[3], normal_results[3])
+    sniffles_paired(tumor_results.first(), normal_results.first())
 
     tumor_output(tumor_results)
     normal_output(normal_results)
