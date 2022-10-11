@@ -546,9 +546,9 @@ workflow tumor_bam {
             optional_file)
     emit:
         report.html.concat(
+            called.snf,
             called.vcf,
             called.vcf_index,
-            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
@@ -572,9 +572,9 @@ workflow normal_bam {
             optional_file)
     emit:
         report.html.concat(
+            called.snf,
             called.vcf,
             called.vcf_index,
-            called.snf,
             Channel.from([bam]),
             Channel.from([bam_index]))
 }
@@ -698,9 +698,9 @@ workflow {
     tumor_results = tumor_bam(tumor_bam, tumor_bai, reference, target, OPTIONAL)
     normal_results = normal_bam(normal_bam, normal_bai, reference, target, OPTIONAL)
 
-    tumor_results | view()
+    tumor_results| first| view()
 
-    sniffles_paired(tumor_results[3], normal_results[3])
+    //sniffles_paired(tumor_results[3], normal_results[3])
 
     tumor_output(tumor_results)
     normal_output(normal_results)
