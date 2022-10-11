@@ -408,6 +408,22 @@ process normal_output {
     """
 }
 
+// See https://github.com/nextflow-io/nextflow/issues/1636
+// This is the only way to publish files from a workflow whilst
+// decoupling the publish from the process steps.
+process paired_output {
+    // publish inputs to output directory
+    label "wf_human_sv"
+    publishDir "${params.out_dir}", mode: 'copy', pattern: "*"
+    input:
+        path fname
+    output:
+        path fname
+    """
+    echo "Writing output files"
+    """
+}
+
 
 
 // Workflow subworkflows
@@ -700,12 +716,10 @@ workflow {
     tumor_results = tumor_bam(tumor_bam, tumor_bai, reference, target, OPTIONAL)
     normal_results = normal_bam(normal_bam, normal_bai, reference, target, OPTIONAL)
 
-    tumor_results| first| view()
-
-    sniffles_paired(tumor_results.last(), normal_results.last())
+    paired_results = sniffles_paired(tumor_results.last(), normal_results.last())
 
     tumor_output(tumor_results)
     normal_output(normal_results)
-
+    paired_output(paired_results)
 }
 
